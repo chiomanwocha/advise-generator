@@ -2,22 +2,18 @@ import './assets/css/card.css'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Loader from './Loader'
-import { Icon } from '@iconify/react';
 
 const Card = () => {
-    const [num, setNum] = useState('')
+    const [num, setNum] = useState()
     const [advice, setAdvice] = useState('')
     const [loader, setLoader] = useState(false)
-    const [advices, setAdvices] = useState([])
 
     const next = () => {
         setLoader(true)
-        const num = Math.floor(Math.random() * 220) + 1
-        axios.get(`	https://api.adviceslip.com/advice/${num}`)
+        axios.get('https://api.adviceslip.com/advice')
         .then(response => {
             setAdvice(response.data.slip.advice)
-            setAdvices([...advices, response.data.slip])
-            setNum(num)
+            setNum(response.data.slip.id)
             setLoader(false)
         })
         .catch(err => {
@@ -26,8 +22,8 @@ const Card = () => {
     }
 
     useEffect(() => {
-        setLoader(true)
         next()
+        setLoader(true)
     }, [])
 
     return ( 
