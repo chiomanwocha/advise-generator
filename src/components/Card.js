@@ -1,43 +1,40 @@
 import './assets/css/card.css'
-import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Loader from './Loader'
+import { useQuery } from 'react-query'
+import { useState } from 'react'
 
 const Card = () => {
-    const [num, setNum] = useState()
-    const [advice, setAdvice] = useState('')
-    const [loader, setLoader] = useState(false)
-
-    const next = () => {
-        setLoader(true)
-        axios.get('https://api.adviceslip.com/advice')
-        .then(response => {
-            setAdvice(response.data.slip.advice)
-            setNum(response.data.slip.id)
-            setLoader(false)
-        })
-        .catch(err => {
-            alert(err)
-        })
+    const [errorMessage, setErrorMessage] = useState('')
+    const fetch = () => {
+        return axios.get('https://api.adviceslip.com/advice')
     }
 
-    useEffect(() => {
-        next()
-        setLoader(true)
-    }, [])
-
+    const onError = () => {
+        setErrorMessage('Oops, something is wrong, please try again ..')
+    }
+    const {data, status, error, isFetching, refetch} = useQuery(['advices'], fetch, {
+        refetchOnWindowFocus: false,
+        onError
+    })
+    
     return ( 
         <div className='container'>
-            <div className="card" onClick={next}>
-                {loader?
-                    <div className='loader-container'>
-                        <Loader />
-                    </div>:
-                        <div>
-                            <p>{num}</p>
-                            <h3>{advice}</h3>
+            <div className="card" onClick={refetch}>
+                    {(status === 'loading' || isFetching) &&  
+                        <div className='loader-container'>
+                            <Loader />
                         </div>
-                }
+                    }
+                    {status === 'error' &&
+                        <p className='error'>{errorMessage}</p>
+                    }
+                    {(status === 'success' && !isFetching )&&
+                        <div>
+                            <p>{data?.data.slip.id}</p>
+                            <h3>{data?.data.slip.advice}</h3>
+                        </div>
+                    }
             </div>
         </div>
      );

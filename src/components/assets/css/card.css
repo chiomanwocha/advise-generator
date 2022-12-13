@@ -11,6 +11,7 @@
 .card:hover {
   box-shadow: 0 0 100px rgb(255, 255, 255);
   transition: 0.1s;
+  cursor: pointer;
 }
 
 .loader-container {
@@ -25,6 +26,12 @@
 .container {
   margin: 100px auto;
   align-items: center;
+}
+.container .error {
+  font-weight: 900;
+  text-align: center;
+  color: rgb(188, 0, 0);
+  margin: 10vh 0;
 }
 
 @media screen and (max-width: 768px) {
